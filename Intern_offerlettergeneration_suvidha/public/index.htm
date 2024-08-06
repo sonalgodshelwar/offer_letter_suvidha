@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"
+  integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+<head>
+
+
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+  <link rel="stylesheet" href="./index.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+  <button type="button" class="btn btn-danger logout-button" id="logoutButton">Logout</button>
+  <div class="spinner-overlay">
+    <div class="spinner"></div>
+  </div>
+  <div class="container" style="margin-top: 20px">
+    <form class="row g-3">
+      <div class="col-md-1">
+        <label for="inputSalutation" class="form-label">State</label>
+        <select id="inputSalutation" class="form-select">
+          <option selected>Mr.</option>
+          <option>Mrs.</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="inputName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputName" />
+      </div>
+      <div class="col-md-3">
+        <label for="inputPost" class="form-label">For Post</label>
+        <input type="text" class="form-control" id="inputPost" />
+      </div>
+      <div class="col-2">
+        <label for="inputFrom" class="form-label">From</label>
+        <input type="date" class="form-control" id="inputFrom" placeholder="1234 Main St" />
+      </div>
+      <div class="col-2">
+        <label for="inputTo" class="form-label">To</label>
+        <input type="date" class="form-control" id="inputTo" placeholder="1234 Main St" />
+      </div>
+      <div class="col-6">
+        <label for="inputMail" class="form-label">Mail</label>
+        <input type="email" class="form-control" id="inputMail" placeholder="Email here" />
+      </div>
+      <div class="col-6">
+        <label for="inputUID" class="form-label">UID</label>
+        <input type="text" class="form-control" id="inputUID" placeholder="UID here" readonly />
+      </div>
+
+      <div class="col-12">
+        <button type="button" id="buttonAdd" class="btn btn-primary">
+          Add
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="container mt-4">
+    <div class="row mb-3">
+      <div class="col-11">
+        <input type="text" class="form-control" id="searchInput" placeholder="Search with UID" />
+      </div>
+      <div class="col-1">
+        <button type="button" class="btn btn-primary" id="searchButton">Seach</button>
+      </div>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>UID</th>
+          <th>State</th>
+          <th>Name</th>
+          <th>For Post</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Email</th>
+
+          <th style="width: 40%;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Rows will be inserted here dynamically -->
+      </tbody>
+    </table>
+
+
+
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateModalLabel">Update Record</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="updateForm">
+            <div class="mb-3">
+              <label for="updateSalutation" class="form-label">Salutation</label>
+              <input type="text" class="form-control" id="updateSalutation">
+            </div>
+            <div class="mb-3">
+              <label for="updateName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="updateName">
+            </div>
+            <div class="mb-3">
+              <label for="updatePost" class="form-label">Post</label>
+              <input type="text" class="form-control" id="updatePost">
+            </div>
+            <div class="mb-3">
+              <label for="updateStart" class="form-label">Start Date</label>
+              <input type="date" class="form-control" id="updateStart">
+            </div>
+            <div class="mb-3">
+              <label for="updateEnd" class="form-label">End Date</label>
+              <input type="date" class="form-control" id="updateEnd">
+            </div>
+            <div class="mb-3">
+              <label for="updateEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="updateEmail">
+            </div>
+            <input type="hidden" id="updateUid">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveUpdate">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+
+
+    $(document).ready(() => {
+      const sessionToken = sessionStorage.getItem('sessionToken');
+      const isLoggedIn = !!sessionToken;
+
+
+      const path = window.location.pathname;
+
+      // Redirect logic
+      if (!isLoggedIn && path !== '/login.htm') {
+        // If not logged in and not on the login page, redirect to login page
+        window.location.href = 'login.htm';
+      } else if (isLoggedIn && path === '/login.htm') {
+        // If logged in and on the login page, redirect to index page
+        window.location.href = 'index.htm';
+      }
+
+      const SESSION_TIMEOUT = 10 * 60 * 1000; 
+      let sessionTimeout;
+
+      // Check if user is already logged in
+      if (!sessionStorage.getItem('sessionToken')) {
+        // No session token found, redirect to login page
+        console.log('No session token found. Redirecting to login...');
+        window.location.href = 'login.htm';
+      } else {
+        // Session token exists, start session timer
+        console.log('Session token found. Starting session timer...');
+        startSessionTimer();
+      }
+
+      function startSessionTimer() {
+        clearTimeout(sessionTimeout);
+        sessionTimeout = setTimeout(logout, SESSION_TIMEOUT);
+      }
+
+      function logout() {
+        console.log('Session expired. Logging out...');
+        sessionStorage.removeItem('sessionToken');
+        window.location.href = 'login.htm'; // Redirect to login page
+      }
+
+
+      //logout
+      $("#logoutButton").click(function () {
+         
+         logout()
+      });
+
+      function fetchLatestUID() {
+        $.ajax({
+          type: "GET",
+          url: "http://localhost:8000/api/latest-uid", 
+          dataType: "json",
+          success: function (response) {
+            $("#inputUID").val(response.uid);
+          },
+          error: function (xhr, status, error) {
+            console.error('Error fetching latest UID:', error);
+            alert('Failed to fetch latest UID');
+          }
+        });
+      }
+      fetchLatestUID();
+
+      // Set initial UID value
+      function toggleSearchButton() {
+        const searchInput = $("#searchInput").val() || ""; // Ensure searchInput is a string
+        if ($("#searchInput").val() == "")
+          populateTable()
+        $("#searchButton").prop("disabled", searchInput.trim() === "");
+
+      }
+
+      // Call the function on input change
+      $("#searchInput").on("input", toggleSearchButton);
+
+      // Initial call to set the button state based on the initial input value
+      toggleSearchButton();
+
+
+
+
+
+      // function to seearch user by id
+      function searchOfferByUID(uid) {
+        $.ajax({
+          type: "GET",
+          url: `http://localhost:8000/api/fetchDetailsbyId/${uid}`,
+          dataType: "json",
+          success: function (response) {
+            console.log('Offer found:', response);
+            // Populate the form or table with the offer details
+            $("#tableBody").html(`
+                            <tr>
+                                <td>${response.uid}</td>
+                                <td>${response.salutation}</td>
+                                <td>${response.name}</td>
+                                <td>${response.post}</td>
+                                <td>${new Date(response.start).toLocaleDateString()}</td>
+                                <td>${new Date(response.end).toLocaleDateString()}</td>
+                                <td>${response.email}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-update" data-id="${response.uid}" data-bs-toggle="modal" data-bs-target="#updateModal">Update</button>
+                                    <button class="btn btn-danger btn-delete" data-id="${response.uid}">Delete</button>
+                                </td>
+                            </tr>
+                        `);
+          },
+          error: function (xhr, status, error) {
+            console.error('Error searching offer:', error);
+            $("#tableBody").html('<tr><td colspan="8">Offer not found</td></tr>');
+          }
+        });
+      }
+
+      // Event listener for search button
+      $("#searchButton").click(() => {
+        const uid = $("#searchInput").val();
+        searchOfferByUID(uid);
+      });
+
+      // Pagination
+
+
+
+
+      // Populate table function
+
+
+      // Initial table population
+
+
+
+      // Event listener for search button
+
+
+      checkFormFields();
+
+
+      $(
+        "#inputUID, #inputSalutation, #inputName, #inputPost, #inputFrom, #inputTo, #inputMail"
+      ).on("input change", checkFormFields);
+
+      // Function to clear all fields after successful insertion
+      function clearFormFields() {
+
+        $("#inputSalutation").val("Mr."); // or set it to the default option
+
+        $("#inputName").val("");
+        $("#inputPost").val("");
+        $("#inputFrom").val("");
+        $("#inputTo").val("");
+        $("#inputMail").val("");
+        fetchLatestUID()
+
+      }
+
+      // Function for disabling and validating dates
+      function updateToDateConstraints() {
+        const startDate = $("#inputFrom").val();
+        if (startDate) {
+          $("#inputTo").attr("min", startDate);
+        } else {
+          $("#inputTo").removeAttr("min");
+        }
+      }
+
+      function validateDateRange() {
+        const startDate = new Date($("#inputFrom").val());
+        const endDate = new Date($("#inputTo").val());
+
+        if (endDate <= startDate) {
+          $("#inputTo").addClass("is-invalid");
+          $("#dateError").text("End date must be greater than start date.");
+        } else {
+          $("#inputTo").removeClass("is-invalid");
+          $("#dateError").text("");
+        }
+      }
+      $("#inputFrom").on("input blur", () => {
+        updateToDateConstraints();
+        validateDateRange();
+      });
+
+
+      // $("#updateStart").on("input blur",validateDateRange1);
+
+      // Function for validating email
+      function validateEmail() {
+        const emailField = $("#inputMail");
+        const email = emailField.val();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (emailRegex.test(email)) {
+          emailField.removeClass("is-invalid");
+          $("#emailError").text("");
+          $("#buttonAdd").prop("disabled", false);
+        } else {
+          emailField.addClass("is-invalid");
+          $("#emailError").text("Please enter a valid email address.");
+          $("#buttonAdd").prop("disabled", true);
+        }
+      }
+
+      // Checking for all form fields
+      function checkFormFields() {
+
+        const salutation = $("#inputSalutation").val();
+        const name = $("#inputName").val();
+        const post = $("#inputPost").val();
+        const start = $("#inputFrom").val();
+        const end = $("#inputTo").val();
+        const email = $("#inputMail").val();
+
+        if (
+
+          salutation &&
+          name &&
+          post &&
+          start &&
+          end &&
+          email &&
+          !$("#emailError").text()
+        ) {
+          $("#buttonAdd").prop("disabled", false);
+        } else {
+          $("#buttonAdd").prop("disabled", true);
+        }
+        if ($("#searchInput").empty())
+          $("#searchButton").prop("disabled", true);
+        else
+          $("#searchButton").prop("disabled", false);
+
+
+
+      }
+
+      // Check for correct email syntax
+      $("#inputMail").on("blur", validateEmail);
+
+      // Adding an entry through ajax
+      $("#buttonAdd").click(() => {
+        const uid = $("#inputUID").val();
+        const salutation = $("#inputSalutation").val();
+        const name = $("#inputName").val();
+        const post = $("#inputPost").val();
+        const start = $("#inputFrom").val();
+        const end = $("#inputTo").val();
+        const email = $("#inputMail").val();
+
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:8000/api/addNew", // Replace with your API endpoint
+          dataType: "json",
+          contentType: "application/json",
+          data: JSON.stringify({
+            uid,
+            salutation,
+            name,
+            post,
+            start,
+            end,
+            email,
+          }),
+        })
+          .done((response) => {
+            showToast("success", "Record Saved");
+
+            clearFormFields();
+            fetchLatestUID()
+            populateTable();
+          })
+          .fail((xhr, status, error) => {
+            let response;
+            try {
+              response = JSON.parse(xhr.responseText);
+            } catch (e) {
+              console.error("Failed to parse JSON response:", e);
+              alert("An error occurred while processing the request.");
+              return;
+            }
+
+            if (response && response.error && response.error.message) {
+              const duplicateMessage = response.error.message;
+              alert(duplicateMessage);
+            } else {
+              console.error("Error message not available in the response");
+              alert("An unexpected error occurred.");
+            }
+          });
+      });
+    });
+    //function to poulate table
+
+
+
+
+
+
+    function populateTable() {
+      function updateToDateConstraints1() {
+        const startDate = $("#updateStart").val();
+        if (startDate) {
+          $("#updateEnd").attr("min", startDate);
+        } else {
+          $("#updateEnd").removeAttr("min");
+        }
+      }
+
+      function validateDateRange1() {
+        const startDate = new Date($("#updateStart").val());
+        const endDate = new Date($("#updateEnd").val());
+
+        if (endDate <= startDate) {
+          $("#updateEnd").addClass("is-invalid");
+          $("#dateError").text("End date must be greater than start date.");
+        } else {
+          $("#updateEnd").removeClass("is-invalid");
+          $("#dateError").text("");
+        }
+      }
+      $("#updateStart").on("input blur", () => {
+        updateToDateConstraints1();
+        validateDateRange1();
+      });
+
+
+      $.ajax({
+        type: "GET",
+        url: "http://localhost:8000/api/selectUser", // Replace with your actual API endpoint
+        dataType: "json",
+
+      })
+        .done(function (response) {
+          console.log("API Response:", response); // Log the response for debugging
+
+          const tableBody = $("#tableBody");
+          tableBody.empty(); // Clear existing rows
+
+          if (Array.isArray(response) && response.length > 0) {
+            response.forEach((item) => {
+              const startDate = new Date(item.start).toLocaleDateString();
+              const endDate = new Date(item.end).toLocaleDateString();
+
+              tableBody.append(`
+                  <tr>
+                    <td>${item.uid}</td>
+                    <td>${item.salutation}</td>
+                    <td>${item.name}</td>
+                    <td>${item.post}</td>
+                    <td>${startDate}</td>
+                    <td>${endDate}</td>
+                    <td>${item.email}</td>
+
+                    <td>
+                     
+                    <button class="btn btn-primary btn-update" data-id="${item.uid}" data-bs-toggle="modal" data-bs-target="#updateModal">Update</button>
+                    <button class="btn btn-danger btn-delete" id="btnDelete" data-id="${item.uid}">Delete</button>
+                      
+                      <button class="btn btn-success btn-send-mail" data-id="${item.uid}" data-email="${item.email}">Send Mail</button>
+                      <button class="btn btn-warning btn-generate-pdf" data-id="${item.uid}">Download PDF</button>
+                      
+                    </td>
+                  </tr>
+                `);
+            });
+            $(".btn-delete").click(function () {
+              let text = "Select ok to delete";
+              if (!confirm(text))
+                return;
+              const uid = $(this).data("id");
+              deleteRecord(uid);
+            });
+            $(".btn-update").click(function () {
+              const uid = $(this).data("id");
+              const record = response.find((item) => item.uid === uid);
+              if (record) {
+
+                populateUpdateModal(record);
+                updateToDateConstraints1()
+              }
+            });
+          } else {
+
+            console.warn(
+              "No data available or data is not in expected format."
+            );
+            tableBody.append(
+              '<tr><td colspan="9">No data available</td></tr>'
+            ); // Updated colspan
+          }
+        })
+        .fail(function (xhr, status, error) {
+          console.error(
+            "Error fetching data:",
+            xhr.status,
+            xhr.statusText,
+            error
+          );
+          alert(
+            "Error fetching data: " + xhr.statusText + " (" + xhr.status + ")"
+          );
+        });
+    }
+    function deleteRecord(uid) {
+      $.ajax({
+        type: "DELETE",
+        url: `http://localhost:8000/api/deleteDetails/${uid}`, // Replace with your actual API endpoint
+      })
+        .done(function (response) {
+          showToast('success', 'Record Deleted');
+
+          populateTable(); // Refresh the table after deletion
+        })
+        .fail(function (xhr, status, error) {
+          showToast('error', 'Error deleting record:');
+          console.error(
+            "Error deleting record:",
+            xhr.status,
+            xhr.statusText,
+            error
+          );
+          alert(
+            "Error deleting record: " +
+            xhr.statusText +
+            " (" +
+            xhr.status +
+            ")"
+          );
+        });
+    }
+    function updateRecord(uid) {
+      $.ajax({
+        type: "PUT",
+        url: `http://localhost:8000/api/updateDetails/${uid}`, // Replace with your actual API endpoint
+      })
+        .done(function (response) {
+          showToast("success", "Record Updated")
+
+          // Refresh the table after deletion
+        })
+        .fail(function (xhr, status, error) {
+          console.error(
+            "Error updating record:",
+            xhr.status,
+            xhr.statusText,
+            error
+          );
+          alert(
+            "Error updating record: " +
+            xhr.statusText +
+            " (" +
+            xhr.status +
+            ")"
+          );
+        });
+    }
+    function populateUpdateModal(record) {
+      updateToDateConstraints1();
+      function updateToDateConstraints1() {
+        const startDate = $("#updateStart").val();
+        if (startDate) {
+          $("#updateEnd").attr("min", startDate);
+        } else {
+          $("#updateEnd").removeAttr("min");
+        }
+      }
+
+      function validateDateRange1() {
+        const startDate = new Date($("#updateStart").val());
+        const endDate = new Date($("#updateEnd").val());
+
+        if (endDate <= startDate) {
+          $("#updateEnd").addClass("is-invalid");
+          $("#dateError").text("End date must be greater than start date.");
+        } else {
+          $("#updateEnd").removeClass("is-invalid");
+          $("#dateError").text("");
+        }
+      }
+      $("#updateStart").on("input blur", () => {
+        updateToDateConstraints1();
+        validateDateRange1();
+      });
+      $("#updateSalutation").val(record.salutation);
+      $("#updateName").val(record.name);
+      $("#updatePost").val(record.post);
+      $("#updateStart").val(new Date(record.start).toISOString().split('T')[0]);
+      $("#updateEnd").val(new Date(record.end).toISOString().split('T')[0]);
+      $("#updateEmail").val(record.email);
+      $("#updateUid").val(record.uid);
+      $("#updateStart").on("input blur", () => {
+        updateToDateConstraints1();
+        validateDateRange1();
+      });
+
+      $("#updateEnd").on("input blur", validateDateRange1);
+    }
+
+    $("#saveUpdate").click(function () {
+      const updatedRecord = {
+
+        salutation: $("#updateSalutation").val(),
+        name: $("#updateName").val(),
+        post: $("#updatePost").val(),
+        start: $("#updateStart").val(),
+        end: $("#updateEnd").val(),
+        email: $("#updateEmail").val(),
+      };
+      const uid = $("#updateUid").val();
+
+      $.ajax({
+        type: "PUT", // Use the appropriate method (POST/PUT) for your update endpoint
+        url: `http://localhost:8000/api/updateDetails/${uid}`, // Replace with your actual API endpoint
+        contentType: "application/json",
+        data: JSON.stringify(updatedRecord),
+      })
+        .done(function (response) {
+          alert("Successfully Updated",)
+          console.log("Update Response:", response); // Log the response for debugging
+          $("#updateModal").modal("hide");
+          populateTable(); // Refresh the table after update
+        })
+        .fail(function (xhr, status, error) {
+          console.error("Error updating record:", xhr.status, xhr.statusText, error);
+          alert("Error updating record: " + xhr.statusText + " (" + xhr.status + ")");
+        });
+    });
+    // Call the function to populate the table
+    populateTable();
+
+    // Add event listener for the send mail button
+    // $(document).on('click', '.btn-send-mail', function () {
+    //   const uid = $(this).data('id');
+    //   const email = $(this).data('email');
+    //   const name = $(this).data('name');
+    //   const subject = 'Lwda Akshit ';
+    //   const text = 'Kaustubh Papa mail bhej rha';
+    //   showSpinner();
+
+    //   $.ajax({
+    //     type: "POST",
+    //     url: "http://localhost:8000/api/sendMail",
+    //     dataType: "json",
+    //     contentType: "application/json",
+    //     data: JSON.stringify({
+    //       name:name,
+    //       email: email,
+    //       uid:uid
+
+    //     }),
+    //     success: function (response) {
+    //       showToast('success', 'Email sent');
+
+
+    //       hideSpinner();
+    //     },
+    //     error: function (xhr, status, error) {
+    //       showToast('error', 'Failed to send email');
+
+    //       hideSpinner();
+    //     }
+    //   });
+    // });
+    function showSpinner() {
+      $('.spinner-overlay').css('display', 'flex');
+    }
+
+    function hideSpinner() {
+      $('.spinner-overlay').css('display', 'none');
+    }
+
+    function showToast(type, message) {
+      toastr[type](message, {
+        positionClass: 'toast-top-right',
+        timeOut: 5000, // Duration in milliseconds
+      });
+    }
+    function getCurrentDate() {
+      const today = new Date();
+      const month = String(today.getDate()).padStart(2, '0'); // Day of the month (01-31)
+      const day = today.toLocaleString('default', { month: 'long' }); // Full month name (January-December)
+      const year = today.getFullYear(); // Year (e.g., 2024)
+
+      // Ensure the date format is in DD Month YYYY
+      return `${year} ${day} ${month} `;
+    }
+
+    $(document).on('click', '.btn-generate-pdf', function () {
+      const uid = $(this).data('id');
+
+      // Fetch data by ID
+      $.ajax({
+        type: "GET",
+        url: `http://localhost:8000/api/fetchDetailsbyId/${uid}`, // Replace with your actual API endpoint
+        dataType: "json",
+        success: function (response) {
+          console.log('Fetched details:', response);
+
+          // Send POST request to generate PDF
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:8000/api/generatePdf", // Replace with your actual API endpoint
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify({
+              uid: response.uid,
+              salutation: response.salutation,
+              name: response.name,
+              post: response.post,
+              start: response.start,
+              end: response.end,
+              email: response.email,
+              currentDate: getCurrentDate() // Generate current date
+            }),
+            success: async function (pdfResponse) {
+              // Ensure the response contains a URL
+              if (pdfResponse && pdfResponse.pdfUrl) {
+                // Open the PDF in a new tab
+                await showToast('success', 'PDF generated and opened successfully.');
+                await window.open(pdfResponse.pdfUrl, '_blank');
+              } else {
+                console.error('Invalid PDF response:', pdfResponse);
+                showToast('error', 'Failed to generate PDF.');
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('Error generating PDF:', error);
+              showToast('error', 'Failed to generate PDF.');
+            }
+          });
+        },
+        error: function (xhr, status, error) {
+          console.error('Error fetching details:', error);
+          showToast('error', 'Failed to fetch details.');
+        }
+      });
+    });
+
+    $(document).on('click', '.btn-send-mail', async function () {
+      const uid = $(this).data('id');
+
+      if (!uid) {
+        showToast('error', 'User ID is missing.');
+        return;
+      }
+
+      showSpinner();
+
+      try {
+        // Fetch data by ID
+        const response = await $.ajax({
+          type: "GET",
+          url: `http://localhost:8000/api/fetchDetailsbyId/${uid}`,
+          dataType: "json",
+        });
+
+        console.log('Fetched details:', response);
+
+        // Send POST request to generate PDF and send mail
+        await $.ajax({
+          type: "POST",
+          url: "http://localhost:8000/api/sendMail",
+          dataType: "json",
+          contentType: "application/json",
+          data: JSON.stringify({
+            uid: response.uid,
+            email: response.email,
+            salutation: response.salutation,
+            name: response.name,
+            post: response.post,
+            start: response.start,
+            end: response.end,
+            currentDate: getCurrentDate()
+          })
+        });
+
+        showToast('success', 'Email successfully sent.');
+      } catch (error) {
+        console.error('Error occurred:', error);
+
+        if (error.status === 404) {
+          showToast('error', 'User details not found.');
+        } else if (error.status === 500) {
+          showToast('error', 'Server error occurred.');
+        } else {
+          showToast('error', 'An unexpected error occurred.');
+        }
+
+        // Hide the spinner on error
+        hideSpinner();
+      } finally {
+        hideSpinner(); // Hide the spinner on both success and error
+      }
+    });
+
+    // Utility function to get the current date in a specific format
+    function getCurrentDate() {
+      const date = new Date();
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    }
+
+
+    // Utility function to get the current date in a specific format
+    function getCurrentDate() {
+      const date = new Date();
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    }
+
+
+
+  </script>
+</body>
+
+</html>
